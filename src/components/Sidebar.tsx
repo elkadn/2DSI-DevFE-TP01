@@ -19,6 +19,7 @@ export default function Sidebar({
   onRenameProject,
   onDeleteProject,
 }: SidebarProps) {
+  console.log('Sidebar re-render');
   return (
     <aside
       className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}

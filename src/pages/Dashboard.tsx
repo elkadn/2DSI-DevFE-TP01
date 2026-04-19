@@ -1,4 +1,7 @@
-import { useAuth } from "../features/auth/AuthContext";
+// import { useAuth } from "../features/auth/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../store";
+import { logout } from "../features/auth/authSlice";
 import api from "../api/axios";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -9,7 +12,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import HeaderMUI from "../components/HeaderMUI";
 import HeaderBS from "../components/HeaderBS";
-
+import { useCallback } from 'react';
+import { memo } from 'react';
+import useProjects from '../hooks/useProjects';
 interface Project {
   id: string;
   name: string;
@@ -22,7 +27,12 @@ interface Column {
 }
 
 export default function Dashboard() {
-  const { state: authState, dispatch } = useAuth();
+  // const { state: authState, dispatch } = useAuth();
+  const dispatch = useDispatch();
+
+
+
+  const authState = useSelector((state: RootState) => state.auth);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [projects, setProjects] = useState<Project[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -30,7 +40,12 @@ export default function Dashboard() {
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-
+  const dangerousName = '<img src=x onerror=alert("HACK")>';
+  const MemoizedSidebar = memo(Sidebar);
+  const handleRename = useCallback((project: Project) => {
+    renameProject(project);
+  }, []);
+  
   // GET — charger les données au montage
   useEffect(() => {
     async function fetchData() {
@@ -61,7 +76,7 @@ export default function Dashboard() {
       if (axios.isAxiosError(err)) {
         setError(
           err.response?.data?.message ||
-            `Erreur lors d'ajout ${err.response?.status}`,
+          `Erreur lors d'ajout ${err.response?.status}`,
         );
       } else {
         setError("Erreur inconnue");
@@ -95,7 +110,7 @@ export default function Dashboard() {
       if (axios.isAxiosError(err)) {
         setError(
           err.response?.data?.message ||
-            `Erreur lors de renommage ${err.response?.status}`,
+          `Erreur lors de renommage ${err.response?.status}`,
         );
       } else {
         setError("Erreur inconnue");
@@ -141,16 +156,25 @@ export default function Dashboard() {
         title="TaskFlow"
         onMenuClick={() => setSidebarOpen((p) => !p)}
         userName={authState.user?.name}
-        onLogout={() => dispatch({ type: "LOGOUT" })}
+        onLogout={() => dispatch(logout())}
+      // dispatch({ type: "LOGOUT" })}
       />
       <div className={styles.body}>
-        <Sidebar
+        {/* <Sidebar
+          projects={projects}
+          isOpen={sidebarOpen}
+          onRenameProject={renameProject}
+          onDeleteProject={deleteProject}
+        /> */}
+        <MemoizedSidebar
           projects={projects}
           isOpen={sidebarOpen}
           onRenameProject={renameProject}
           onDeleteProject={deleteProject}
         />
 
+        <p>{dangerousName}</p>
+        {/* <div dangerouslySetInnerHTML={{ __html: dangerousName }} /> */}
         {error && <div className={styles.error}>{error}</div>}
 
         <div className={styles.content}>
