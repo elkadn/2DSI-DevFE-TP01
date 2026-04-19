@@ -7,6 +7,8 @@ import styles from "./Dashboard.module.css";
 import ProjectForm from "../components/ProjectForm";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import HeaderMUI from "../components/HeaderMUI";
+import HeaderBS from "../components/HeaderBS";
 
 interface Project {
   id: string;
@@ -123,7 +125,19 @@ export default function Dashboard() {
 
   return (
     <div className={styles.layout}>
-      <Header
+      {/* <Header
+        title="TaskFlow"
+        onMenuClick={() => setSidebarOpen((p) => !p)}
+        userName={authState.user?.name}
+        onLogout={() => dispatch({ type: "LOGOUT" })}
+      /> */}
+      {/* <HeaderMUI
+        title="TaskFlow"
+        onMenuClick={() => setSidebarOpen((p) => !p)}
+        userName={authState.user?.name}
+        onLogout={() => dispatch({ type: "LOGOUT" })}
+      /> */}
+      <HeaderBS
         title="TaskFlow"
         onMenuClick={() => setSidebarOpen((p) => !p)}
         userName={authState.user?.name}
